@@ -1,24 +1,38 @@
-version: "3.8"
-
-services: 
+services:
   mongodb:
+    image: mongo:7.0
     container_name: mongo
-    image: mongo:latest
-    ports: 
-    - "27017:27017"
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data/db
 
-  backend: 
-    container_name: backend
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  backend:
     build: ./backend
+    container_name: backend
+    ports:
+      - "5000:8080"
     env_file:
       - ./backend/.env.sample
-    ports: 
-      - "5000:5000"
+    depends_on:
+      - mongodb
+      - redis
 
   frontend:
+    build: ./frontend
     container_name: frontend
-    build: ./backend
+    ports:
+      - "5173:5173"
     env_file:
-      - ./backend/.env.sample
-    ports: 
-      - "5173:5173"   
+      - ./frontend/.env.sample
+    depends_on:
+      - backend
+
+volumes:
+  data:
