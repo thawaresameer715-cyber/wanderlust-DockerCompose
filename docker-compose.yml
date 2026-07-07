@@ -6,7 +6,9 @@ services:
       - "27017:27017"
     volumes:
       - ./backend/data:/data/
-
+      - ./backend/data/sample_posts.json:/tmp/sample_posts.json
+      - ./backend/data/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+  
   redis:
     image: redis:latest
     container_name: redis
